@@ -65,11 +65,17 @@ void kahypar_set_seed(kahypar_context_t* kahypar_context, const int seed) {
   context.partition.seed =seed;
 }
 
-
 void kahypar_configure_context_from_file(kahypar_context_t* kahypar_context,
                                          const char* ini_file_name) {
   kahypar::parseIniToContext(*reinterpret_cast<kahypar::Context*>(kahypar_context),
                              ini_file_name);
+}
+
+// Added
+void kahypar_configure_context_from_string(kahypar_context_t* kahypar_context,
+                                           const std::string& string) {
+  kahypar::parseIniToContextFromString(*reinterpret_cast<kahypar::Context*>(kahypar_context),
+                                       string);
 }
 
 void kahypar_set_fixed_vertices(kahypar_hypergraph_t* kahypar_hypergraph,

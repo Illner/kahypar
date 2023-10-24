@@ -31,6 +31,7 @@
 
 #include <cctype>
 #include <limits>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -749,6 +750,30 @@ void parseIniToContext(Context& context, const std::string& ini_filename) {
   .add(createEvolutionaryOptionsDescription(context, num_columns));
 
   po::store(po::parse_config_file(file, ini_line_options, true), cmd_vm);
+  po::notify(cmd_vm);
+
+  if (context.partition.use_individual_part_weights) {  // Note(Lars): This affects flow network sizes!
+    context.partition.epsilon = 0;
+  }
+}
+
+// Added
+void parseIniToContextFromString(Context& context, const std::string& string) {
+  std::stringstream stringStream(string);
+
+  const int num_columns = 80;
+
+  po::variables_map cmd_vm;
+  po::options_description ini_line_options;
+  ini_line_options.add(createGeneralOptionsDescription(context, num_columns))
+      .add(createGenericOptionsDescription(context, num_columns))
+      .add(createPreprocessingOptionsDescription(context, num_columns))
+      .add(createCoarseningOptionsDescription(context, num_columns, false))
+      .add(createInitialPartitioningOptionsDescription(context, num_columns))
+      .add(createRefinementOptionsDescription(context, num_columns, false))
+      .add(createEvolutionaryOptionsDescription(context, num_columns));
+
+  po::store(po::parse_config_file(stringStream, ini_line_options, true), cmd_vm);
   po::notify(cmd_vm);
 
   if (context.partition.use_individual_part_weights) {  // Note(Lars): This affects flow network sizes!
